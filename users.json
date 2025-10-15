@@ -1,0 +1,8 @@
+[
+  {
+    "email": "user@example.com",
+    "password": "password123",
+    "propertyHistory": ["0", "1"],
+    "notifications": ["alert1"]
+  }
+]

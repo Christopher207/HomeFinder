@@ -1,0 +1,763 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #fff8f3; /* Off-white/Cream */
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Navigation Bar */
+.navbar {
+    background-color: #405d72; /* Dark Slate Gray */
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.nav-logo a {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    margin-right: 10px;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    align-items: center;
+}
+
+.nav-item {
+    margin-left: 2rem;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: #bf9d53; /* Muted Gold */
+}
+
+.nav-item.active .nav-link {
+    color: #bf9d53; /* Muted Gold */
+}
+
+.nav-login-btn {
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.nav-login-btn:hover {
+    background-color: #a88744; /* Darker Gold */
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close, .close-alert, .close-detail {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close:hover, .close-alert:hover, .close-detail:hover {
+    color: black;
+}
+
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    color: #405d72;
+}
+
+#loginForm input {
+    width: 100%;
+    padding: 0.7rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+#loginForm button {
+    width: 100%;
+    padding: 0.7rem;
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+#loginForm button:hover {
+    background-color: #a88744; /* Darker Gold */
+}
+
+#loginForm a {
+    color: #405d72;
+    text-decoration: none;
+}
+
+#loginForm label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.detail-modal-content {
+    width: 80%;
+    max-width: 900px;
+    padding: 2rem;
+}
+
+/* Landing Page Styles */
+.landing-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80') no-repeat center center/cover;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    padding: 0.8rem 2rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #a88744; /* Darker Gold */
+}
+
+.container {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 1rem;
+}
+
+.container h2 {
+    color: #405d72;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.container p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+.problem-section, .solution-section, .target-section {
+    padding: 2rem 0;
+}
+
+/* Opportunity Map Page Styles */
+.opportunity-map-container {
+    display: flex;
+    min-height: calc(100vh - 80px); /* Account for navbar height */
+    padding: 1rem;
+}
+
+.filters-section {
+    width: 250px;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-right: 1rem;
+    height: fit-content;
+}
+
+.search-container {
+    margin-bottom: 1.5rem;
+    display: flex;
+}
+
+.search-container input {
+    flex: 1;
+    padding: 0.7rem;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+}
+
+#searchBtn {
+    padding: 0.7rem 1rem;
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    border: 1px solid #ddd;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#searchBtn:hover {
+    background-color: #a88744; /* Darker Gold */
+}
+
+.filter-group {
+    margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #405d72;
+    font-weight: 500;
+}
+
+.filter-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.map-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#map {
+    flex: 1;
+    height: 70vh;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.map-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.map-control-btn {
+    padding: 0.5rem 1rem;
+    background-color: #405d72; /* Dark Slate Gray */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.map-control-btn:hover {
+    background-color: #314555; /* Darker Slate */
+}
+
+.map-control-btn.active {
+    background-color: #bf9d53; /* Muted Gold */
+}
+
+.history-section {
+    width: 300px;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 80px); /* Full height minus navbar */
+    overflow-y: auto; /* Make it scrollable */
+}
+
+.history-section h2 {
+    color: #405d72;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100vh - 150px); /* Adjust for header and padding */
+}
+
+.history-item {
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.history-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.history-item h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.history-item p {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.3rem;
+}
+
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.history-actions button {
+    padding: 0.4rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.view-details-btn {
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    flex: 1;
+}
+
+.create-alert-btn {
+    background-color: #405d72; /* Dark Slate Gray */
+    color: white;
+    flex: 1;
+}
+
+.delete-history-btn {
+    background-color: #e74c3c; /* Red */
+    color: white;
+    width: 30px;
+    flex: none;
+}
+
+/* Property Detail View */
+.detail-view {
+    display: flex;
+    height: 100%;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.detail-content {
+    flex: 1;
+    display: flex;
+    overflow: auto;
+}
+
+.detail-left {
+    flex: 1;
+    padding: 1rem;
+    border-right: 1px solid #eee;
+}
+
+.detail-right {
+    flex: 1;
+    padding: 2rem;
+}
+
+.detail-left img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.detail-left h2 {
+    color: #405d72;
+    margin-bottom: 0.5rem;
+}
+
+.detail-left p {
+    margin-bottom: 0.3rem;
+}
+
+.detail-right .detail-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem; /* Increased space below action buttons */
+}
+
+.detail-right .detail-actions button {
+    padding: 0.5rem 1rem;
+    background-color: #405d72; /* Dark Slate Gray */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.detail-right .detail-actions button:hover {
+    background-color: #314555; /* Darker Slate */
+}
+
+.detail-right .detail-actions button.active {
+    background-color: #bf9d53; /* Muted Gold */
+}
+
+.dynamic-content {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    min-height: 100px;
+}
+
+.whatsapp-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.whatsapp-section h3 {
+    color: #405d72;
+    margin-bottom: 0.5rem;
+}
+
+.whatsapp-section p {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.whatsapp-btn {
+    display: inline-block;
+    background-color: #25D366; /* WhatsApp green */
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+
+.whatsapp-btn:hover {
+    background-color: #128C7E; /* Darker WhatsApp green */
+}
+
+.back-to-history {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #bf9d53; /* Muted Gold */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Appraise Page Styles */
+.appraise-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.appraise-container h1 {
+    color: #405d72;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.property-display {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.property-image {
+    flex: 1;
+}
+
+.property-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.property-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.property-details h2 {
+    color: #405d72;
+    margin-bottom: 1rem;
+}
+
+.property-details p {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.appraisal-section {
+    margin-top: 2rem;
+}
+
+.appraisal-section h2 {
+    color: #405d72;
+    margin-bottom: 1rem;
+}
+
+.estimated-price {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.estimated-price h3 {
+    font-size: 1.8rem;
+    color: #bf9d53; /* Muted Gold */
+}
+
+.appraisal-details h3 {
+    margin-bottom: 1rem;
+    color: #405d72;
+}
+
+.appraisal-details ul {
+    padding-left: 1.5rem;
+}
+
+.appraisal-details li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+/* Notifications Page Styles */
+.notifications-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.notifications-container h1 {
+    color: #405d72;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.notification-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.notification-info h3 {
+    color: #405d72;
+    margin-bottom: 0.3rem;
+}
+
+.notification-info p {
+    color: #666;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.notification-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.edit-btn {
+    background-color: #405d72; /* Dark Slate Gray */
+    color: white;
+}
+
+.delete-btn {
+    background-color: #e74c3c; /* Red */
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 1100px) {
+    .opportunity-map-container {
+        flex-direction: column;
+    }
+    
+    .filters-section, .history-section {
+        width: 100%;
+        margin: 0 0 1rem 0;
+    }
+    
+    .history-section {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .detail-view {
+        flex-direction: column;
+    }
+    
+    .detail-left {
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .nav-menu {
+        margin-top: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .nav-item {
+        margin: 0.5rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .map-controls {
+        flex-direction: column;
+    }
+    
+    .property-display {
+        flex-direction: column;
+    }
+    
+    .notification-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .notification-actions {
+        align-self: flex-end;
+    }
+}

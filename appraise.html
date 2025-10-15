@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appraise a Property - HomeFinder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="logo.png" alt="HomeFinder Logo" class="logo-img">
+                    <span>HomeFinder</span>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="opportunity-map.html" class="nav-link">Opportunity Map</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="appraise.html" class="nav-link">Appraise a Property</a>
+                </li>
+                <li class="nav-item">
+                    <a href="notifications.html" class="nav-link">Notifications</a>
+                </li>
+                <li class="nav-item">
+                    <button id="loginBtn" class="nav-login-btn">Login</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Login</h2>
+            <form id="loginForm">
+                <div id="loginFields">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p><a href="#" id="showRegister">Don't have an account? Register here.</a></p>
+                </div>
+                <div id="registerFields" style="display: none;">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <label><input type="checkbox" id="terms"> I agree to the Terms and Conditions</label><br>
+                    <label><input type="checkbox" id="privacy"> I authorize the use of my information for additional purposes</label><br>
+                    <button type="button" id="registerSubmit">Register</button>
+                    <p><a href="#" id="showLogin">Already have an account? Login here.</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="appraise-container">
+        <h1>Appraise a Property</h1>
+        
+        <div class="property-display">
+            <div class="property-image">
+                <img id="propertyImage" src="" alt="Property Image">
+            </div>
+            <div class="property-details">
+                <h2 id="propertyTitle"></h2>
+                <p><strong>Contract:</strong> <span id="propertyContract"></span></p>
+                <p><strong>Location:</strong> <span id="propertyLocation"></span></p>
+                <p><strong>Type:</strong> <span id="propertyType"></span></p>
+            </div>
+        </div>
+        
+        <div class="appraisal-section">
+            <h2>Valoración de Propiedad</h2>
+            <p>Nuestro sistema ha analizado la propiedad y generado una estimación basada en múltiples factores del mercado.</p>
+            
+            <div class="estimated-price">
+                <h3>Estimated Price: <span id="estimatedPrice">S/ 2,650</span></h3>
+            </div>
+            
+            <div class="appraisal-details">
+                <h3>Detalles del Análisis</h3>
+                <ul>
+                    <li>Ubicación privilegiada en Lima</li>
+                    <li>Metro cuadrado competitivo para la zona</li>
+                    <li>Condición de la propiedad: Buena</li>
+                    <li>Comparación con propiedades similares en la zona</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeFinder - Encuentra tu hogar ideal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="logo.png" alt="HomeFinder Logo" class="logo-img">
+                    <span>HomeFinder</span>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="opportunity-map.html" class="nav-link">Opportunity Map</a>
+                </li>
+                <li class="nav-item">
+                    <a href="appraise.html" class="nav-link">Appraise a Property</a>
+                </li>
+                <li class="nav-item">
+                    <a href="notifications.html" class="nav-link">Notifications</a>
+                </li>
+                <li class="nav-item">
+                    <button id="loginBtn" class="nav-login-btn">Login</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Login</h2>
+            <form id="loginForm">
+                <div id="loginFields">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p><a href="#" id="showRegister">Don't have an account? Register here.</a></p>
+                </div>
+                <div id="registerFields" style="display: none;">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <label><input type="checkbox" id="terms"> I agree to the Terms and Conditions</label><br>
+                    <label><input type="checkbox" id="privacy"> I authorize the use of my information for additional purposes</label><br>
+                    <button type="button" id="registerSubmit">Register</button>
+                    <p><a href="#" id="showLogin">Already have an account? Login here.</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Landing Page Content -->
+    <main class="landing-page">
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1>Encuentra tu hogar ideal con HomeFinder</h1>
+                <p>Tu plataforma centralizada para evaluar opciones de vivienda de diversas fuentes inmobiliarias.</p>
+                <a href="opportunity-map.html" class="cta-button">Find Your Home Now</a>
+            </div>
+        </section>
+
+        <section class="problem-section">
+            <div class="container">
+                <h2>El Problema</h2>
+                <p>Buscar vivienda en múltiples sitios web es tedioso, consume mucho tiempo y puede ser frustrante. Comparar propiedades en diferentes plataformas dificulta tomar decisiones informadas.</p>
+            </div>
+        </section>
+
+        <section class="solution-section">
+            <div class="container">
+                <h2>La Solución</h2>
+                <p>HomeFinder agrega todas las opciones de vivienda en una sola plataforma. Nuestra herramienta poderosa te permite evaluar propiedades fácilmente, ahorrando tiempo y ayudándote a tomar decisiones informadas.</p>
+            </div>
+        </section>
+
+        <section class="target-section">
+            <div class="container">
+                <h2>Para Quién</h2>
+                <p>Estudiantes, jóvenes profesionales, familias y cualquier persona en busca de un hogar ideal en Perú. Nuestra plataforma está diseñada para satisfacer las necesidades de todo tipo de buscadores de vivienda.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

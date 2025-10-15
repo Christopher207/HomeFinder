@@ -1,0 +1,9 @@
+[
+  {
+    "id": "alert1",
+    "name": "Alerta de ejemplo",
+    "propertyId": "0",
+    "frequency": "weekly",
+    "propertyName": "Alquiler Departamento en Lince S/ 2,700"
+  }
+]
