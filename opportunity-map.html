@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opportunity Map - HomeFinder</title>
+    <title>Mapa de Oportunidades - HomeFinder</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="logo.png" type="image/x-icon">
@@ -22,16 +22,16 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active">
-                    <a href="opportunity-map.html" class="nav-link">Opportunity Map</a>
+                    <a href="opportunity-map.html" class="nav-link">Mapa de Oportunidades</a>
                 </li>
                 <li class="nav-item">
-                    <a href="appraise.html" class="nav-link">Appraise a Property</a>
+                    <a href="appraise.html" class="nav-link">Tasar una Propiedad</a>
                 </li>
                 <li class="nav-item">
-                    <a href="notifications.html" class="nav-link">Notifications</a>
+                    <a href="notifications.html" class="nav-link">Notificaciones</a>
                 </li>
                 <li class="nav-item">
-                    <button id="loginBtn" class="nav-login-btn">Login</button>
+                    <button id="loginBtn" class="nav-login-btn">Iniciar Sesión</button>
                 </li>
             </ul>
         </div>
@@ -41,21 +41,21 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="modalTitle">Login</h2>
+            <h2 id="modalTitle">Iniciar Sesión</h2>
             <form id="loginForm">
                 <div id="loginFields">
                     <input type="email" id="email" placeholder="Email" required>
                     <input type="password" id="password" placeholder="Password" required>
-                    <button type="submit">Login</button>
-                    <p><a href="#" id="showRegister">Don't have an account? Register here.</a></p>
+                    <button type="submit">Iniciar Sesión</button>
+                    <p><a href="#" id="showRegister">¿No tienes una cuenta? Registrate ahora.</a></p>
                 </div>
                 <div id="registerFields" style="display: none;">
                     <input type="email" id="regEmail" placeholder="Email" required>
                     <input type="password" id="regPassword" placeholder="Password" required>
-                    <label><input type="checkbox" id="terms"> I agree to the Terms and Conditions</label><br>
-                    <label><input type="checkbox" id="privacy"> I authorize the use of my information for additional purposes</label><br>
-                    <button type="button" id="registerSubmit">Register</button>
-                    <p><a href="#" id="showLogin">Already have an account? Login here.</a></p>
+                    <label><input type="checkbox" id="terms"> Acepto los términos y condiciones</label><br>
+                    <label><input type="checkbox" id="privacy"> Autorizo el uso de mi información para otros fines</label><br>
+                    <button type="button" id="registerSubmit">Registrarse</button>
+                    <p><a href="#" id="showLogin">¿Ya cuentas con un usuario? Inicia sesión aquí.</a></p>
                 </div>
             </form>
         </div>
@@ -65,13 +65,13 @@
     <div id="alertModal" class="modal">
         <div class="modal-content">
             <span class="close-alert">&times;</span>
-            <h2>Create Alert</h2>
+            <h2>Crear Alerta</h2>
             <form id="alertForm">
                 <input type="text" id="alertName" placeholder="Alert Name" required>
                 <select id="alertFrequency">
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
+                    <option value="daily">Diario</option>
+                    <option value="weekly">Semanal</option>
+                    <option value="monthly">Mensual</option>
                 </select>
                 <button type="submit">Aceptar</button>
             </form>
@@ -98,18 +98,18 @@
             </div>
             
             <div class="filter-group">
-                <label>Property Type</label>
+                <label>Tipo de propiedad:</label>
                 <select id="typeFilter">
-                    <option value="">All Types</option>
+                    <option value="">Todo tipo</option>
                     <option value="departamentos">Departamentos</option>
                     <option value="casas">Casas</option>
                 </select>
             </div>
             
             <div class="filter-group">
-                <label>Contract Type</label>
+                <label>Tipo de contrato</label>
                 <select id="contractFilter">
-                    <option value="">All Contracts</option>
+                    <option value="">Todo contrato</option>
                     <option value="alquiler">Alquiler</option>
                     <option value="venta">Venta</option>
                 </select>
@@ -120,9 +120,9 @@
         <div class="map-section">
             <div id="map"></div>
             <div class="map-controls">
-                <button id="trafficToggle" class="map-control-btn">Traffic Data</button>
-                <button id="shoppingToggle" class="map-control-btn">Shopping Places</button>
-                <button id="securityToggle" class="map-control-btn">Security Data</button>
+                <button id="trafficToggle" class="map-control-btn">Capa de Tránsito</button>
+                <button id="shoppingToggle" class="map-control-btn">Lugares de compras</button>
+                <button id="securityToggle" class="map-control-btn">Capa de seguridad</button>
             </div>
         </div>
 

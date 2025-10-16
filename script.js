@@ -7,7 +7,10 @@ let notifications = [];
 let users = [];
 
 // DOM Content Loaded Event
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Initialize the notifications array early
+    await loadNotifications();
+    
     // Initialize the application based on the current page
     const currentPage = window.location.pathname.split('/').pop();
     
@@ -35,6 +38,15 @@ function initializeMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+    
+    // Add event listeners for map movements to load visible properties
+    map.on('moveend', function() {
+        loadVisibleProperties();
+    });
+    
+    map.on('zoomend', function() {
+        loadVisibleProperties();
+    });
 }
 
 // Add mock overlays for traffic, shopping, and security
@@ -148,25 +160,51 @@ async function loadProperties() {
         markers.forEach(marker => map.removeLayer(marker));
         markers = [];
         
-        // Add markers for each property
-        properties.forEach(property => {
-            const marker = L.marker(property.coords)
-                .addTo(map)
-                .bindPopup(`<b>${property.titulo}</b><br>${property.precio}`);
-                
-            // Add click event to show property in history
-            marker.on('click', function() {
-                addToHistory(property);
-            });
-            
-            markers.push(marker);
-        });
+        // Load only properties in the visible map region
+        loadVisibleProperties();
         
         // Reinitialize the overlays based on the new property data
         addMockOverlays();
     } catch (error) {
         console.error('Error loading properties:', error);
     }
+}
+
+// Load only properties that are in the current map view
+function loadVisibleProperties() {
+    // Clear existing markers
+    markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
+    
+    if (!window.properties) return;
+    
+    // Get the current map bounds
+    const bounds = map.getBounds();
+    const southWest = bounds.getSouthWest();
+    const northEast = bounds.getNorthEast();
+    
+    // Filter properties that are within the current view
+    const visibleProperties = window.properties.filter(property => {
+        const lat = property.coords[0];
+        const lng = property.coords[1];
+        
+        return lat >= southWest.lat && lat <= northEast.lat &&
+               lng >= southWest.lng && lng <= northEast.lng;
+    });
+    
+    // Add markers only for properties in the current view
+    visibleProperties.forEach(property => {
+        const marker = L.marker(property.coords)
+            .addTo(map)
+            .bindPopup(`<b>${property.titulo}</b><br>${property.precio}`);
+            
+        // Add click event to show property in history
+        marker.on('click', function() {
+            addToHistory(property);
+        });
+        
+        markers.push(marker);
+    });
 }
 
 // Add property to history
@@ -226,7 +264,7 @@ function showPropertyDetails(propertyId) {
     detailView.className = 'detail-view';
     detailView.id = 'detailView';
     detailView.innerHTML = `
-        <button class="back-to-history" onclick="hideDetailView()">Back to History</button>
+        <button class="back-to-history" onclick="hideDetailView()">Volver al Historial</button>
         <div class="detail-content">
             <div class="detail-left">
                 <img src="${property.imagen}" alt="${property.titulo}">
@@ -313,28 +351,11 @@ function hideDetailView() {
 
 // Re-initialize the map to refresh it
 function reinitializeMap() {
-    // Clear existing markers
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
+    // Reload properties in the visible area to refresh the map
+    loadVisibleProperties();
     
-    // Reload properties to refresh the map
-    if (window.properties) {
-        window.properties.forEach(property => {
-            const marker = L.marker(property.coords)
-                .addTo(map)
-                .bindPopup(`<b>${property.titulo}</b><br>${property.precio}`);
-                
-            // Add click event to show property in history
-            marker.on('click', function() {
-                addToHistory(property);
-            });
-            
-            markers.push(marker);
-        });
-        
-        // Re-add overlays after reinitializing the markers
-        addMockOverlays();
-    }
+    // Re-add overlays after reinitializing the markers
+    addMockOverlays();
 }
 
 // Open alert modal
@@ -494,7 +515,9 @@ function setupEventListeners() {
             // Add to notifications array
             notifications.push(alert);
             
-            // In a real implementation, we would save this to notifications.json
+            // Save to localStorage (in a real implementation, send to server to write to notifications.json)
+            saveNotificationsToLocalStorage();
+            
             alert('Alert created successfully!');
             
             // Close modal and reset form
@@ -552,18 +575,7 @@ async function performLocationSearch() {
     if (matchingProperty) {
         // If the search matches a property location, focus on that property
         // Fly to the property location
-        map.flyTo(matchingProperty.coords, 15);
-        
-        // Add a temporary marker at the property location
-        const searchMarker = L.marker(matchingProperty.coords)
-            .addTo(map)
-            .bindPopup(`<b>Ubicación buscada:</b><br>${matchingProperty.ubicacion}`)
-            .openPopup();
-            
-        // Clear the temporary marker after 5 seconds
-        setTimeout(() => {
-            map.removeLayer(searchMarker);
-        }, 5000);
+        map.flyTo(matchingProperty.coords, 18);
     } else {
         // If not matching a property, attempt to geocode using a CORS proxy
         try {
@@ -580,20 +592,7 @@ async function performLocationSearch() {
                 const lon = parseFloat(data[0].lon);
                 
                 // Fly to the searched location on the map
-                map.flyTo([lat, lon], 15);
-                
-                // Add a temporary marker at the searched location
-                const searchMarker = L.marker([lat, lon])
-                    .addTo(map)
-                    .bindPopup(`<b>Ubicación buscada:</b><br>${data[0].display_name}`)
-                    .openPopup();
-                    
-                // Clear the temporary marker after 5 seconds
-                setTimeout(() => {
-                    map.removeLayer(searchMarker);
-                }, 5000);
-                
-                console.log(`Searched for: ${searchInput}, found: ${data[0].display_name}`);
+                map.flyTo([lat, lon], 18);
             } else {
                 alert('No se encontró la ubicación buscada');
             }
@@ -602,6 +601,12 @@ async function performLocationSearch() {
             alert('Error al buscar la ubicación. Puede que la ubicación no exista o haya problemas de conexión.');
         }
     }
+    
+    // After the search completes, load properties in the new map view
+    // Delay slightly to allow map to move before loading properties
+    setTimeout(() => {
+        loadVisibleProperties();
+    }, 1000);
 }
 
 // Filter properties based on selections only (without using search input for property filtering)
@@ -611,13 +616,26 @@ function filterProperties() {
     
     // Remove all markers from map
     markers.forEach(marker => map.removeLayer(marker));
+    markers = [];
     
-    // Add only filtered markers
+    if (!window.properties) return;
+    
+    // Get the current map bounds to only filter visible properties
+    const bounds = map.getBounds();
+    const southWest = bounds.getSouthWest();
+    const northEast = bounds.getNorthEast();
+    
+    // Filter properties that are within the current view AND match the filters
     window.properties.forEach(property => {
+        const lat = property.coords[0];
+        const lng = property.coords[1];
+        
+        const inBounds = lat >= southWest.lat && lat <= northEast.lat &&
+                        lng >= southWest.lng && lng <= northEast.lng;
         const matchesType = !typeFilter || property.tipo === typeFilter;
         const matchesContract = !contractFilter || property.contrato === contractFilter;
         
-        if (matchesType && matchesContract) {
+        if (inBounds && matchesType && matchesContract) {
             const marker = L.marker(property.coords)
                 .addTo(map)
                 .bindPopup(`<b>${property.titulo}</b><br>${property.precio}`);
@@ -663,15 +681,47 @@ function displayPropertyOnAppraise(property) {
     document.getElementById('propertyType').textContent = property.tipo;
 }
 
+// Save notifications to localStorage
+function saveNotificationsToLocalStorage() {
+    localStorage.setItem('homefinder_notifications', JSON.stringify(notifications));
+}
+
 // Load notifications
-function loadNotifications() {
-    fetch('notifications.json')
-        .then(response => response.json())
-        .then(data => {
-            notifications = data;
+async function loadNotifications() {
+    // Load from JSON file first
+    try {
+        const response = await fetch('notifications.json');
+        const fileNotifications = await response.json();
+        const fileNotificationsArray = Array.isArray(fileNotifications) ? fileNotifications : [];
+        
+        // Load from localStorage
+        const savedNotifications = localStorage.getItem('homefinder_notifications');
+        const savedNotificationsArray = savedNotifications ? JSON.parse(savedNotifications) : [];
+        
+        // Combine both arrays, avoiding duplicates by ID
+        const combinedNotifications = [...fileNotificationsArray];
+        
+        savedNotificationsArray.forEach(savedNotification => {
+            const exists = combinedNotifications.some(n => n.id === savedNotification.id);
+            if (!exists) {
+                combinedNotifications.push(savedNotification);
+            }
+        });
+        
+        // Set the notifications array to the combined result
+        notifications = combinedNotifications;
+        
+        displayNotifications();
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        
+        // Fallback: try localStorage only
+        const savedNotifications = localStorage.getItem('homefinder_notifications');
+        if (savedNotifications) {
+            notifications = JSON.parse(savedNotifications);
             displayNotifications();
-        })
-        .catch(error => console.error('Error loading notifications:', error));
+        }
+    }
 }
 
 // Display notifications
@@ -712,7 +762,7 @@ function editNotification(notificationId) {
     if (newFrequency) {
         notification.frequency = newFrequency;
         displayNotifications();
-        // In a real implementation, we would save to notifications.json
+        saveNotificationsToLocalStorage(); // Save changes to localStorage
     }
 }
 
@@ -721,6 +771,6 @@ function deleteNotification(notificationId) {
     if (confirm('Are you sure you want to delete this notification?')) {
         notifications = notifications.filter(n => n.id !== notificationId);
         displayNotifications();
-        // In a real implementation, we would save to notifications.json
+        saveNotificationsToLocalStorage(); // Save changes to localStorage
     }
 }

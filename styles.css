@@ -158,9 +158,14 @@ body {
 }
 
 #loginForm label {
-    display: block;
+    display: flex;
+    align-items: center;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
+}
+
+#loginForm input[type="checkbox"] {
+    margin-right: 0.5rem;
 }
 
 .detail-modal-content {

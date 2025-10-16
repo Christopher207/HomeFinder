@@ -19,17 +19,17 @@
                 </a>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="opportunity-map.html" class="nav-link">Opportunity Map</a>
-                </li>
                 <li class="nav-item active">
-                    <a href="appraise.html" class="nav-link">Appraise a Property</a>
+                    <a href="opportunity-map.html" class="nav-link">Mapa de Oportunidades</a>
                 </li>
                 <li class="nav-item">
-                    <a href="notifications.html" class="nav-link">Notifications</a>
+                    <a href="appraise.html" class="nav-link">Tasar una Propiedad</a>
                 </li>
                 <li class="nav-item">
-                    <button id="loginBtn" class="nav-login-btn">Login</button>
+                    <a href="notifications.html" class="nav-link">Notificaciones</a>
+                </li>
+                <li class="nav-item">
+                    <button id="loginBtn" class="nav-login-btn">Iniciar Sesión</button>
                 </li>
             </ul>
         </div>
@@ -39,21 +39,21 @@
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2 id="modalTitle">Login</h2>
+            <h2 id="modalTitle">Iniciar Sesión</h2>
             <form id="loginForm">
                 <div id="loginFields">
                     <input type="email" id="email" placeholder="Email" required>
                     <input type="password" id="password" placeholder="Password" required>
-                    <button type="submit">Login</button>
-                    <p><a href="#" id="showRegister">Don't have an account? Register here.</a></p>
+                    <button type="submit">Iniciar Sesión</button>
+                    <p><a href="#" id="showRegister">¿No tienes una cuenta? Registrate ahora.</a></p>
                 </div>
                 <div id="registerFields" style="display: none;">
                     <input type="email" id="regEmail" placeholder="Email" required>
                     <input type="password" id="regPassword" placeholder="Password" required>
-                    <label><input type="checkbox" id="terms"> I agree to the Terms and Conditions</label><br>
-                    <label><input type="checkbox" id="privacy"> I authorize the use of my information for additional purposes</label><br>
-                    <button type="button" id="registerSubmit">Register</button>
-                    <p><a href="#" id="showLogin">Already have an account? Login here.</a></p>
+                    <label><input type="checkbox" id="terms"> Acepto los términos y condiciones</label><br>
+                    <label><input type="checkbox" id="privacy"> Autorizo el uso de mi información para otros fines</label><br>
+                    <button type="button" id="registerSubmit">Registrarse</button>
+                    <p><a href="#" id="showLogin">¿Ya cuentas con un usuario? Inicia sesión aquí.</a></p>
                 </div>
             </form>
         </div>
