@@ -32,18 +32,30 @@ document.addEventListener('DOMContentLoaded', async function() {
 // Initialize the map
 function initializeMap() {
     // Create the map centered on Lima, Peru
-    map = L.map('map').setView([-12.0464, -77.0428], 20);
+    map = L.map('map').setView([-12.0464, -77.0428], 13); // Changed initial zoom to 13 for better clustering view
 
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-    
+
+    // Initialize marker cluster group
+    window.propertyMarkers = L.markerClusterGroup({
+        chunkedLoading: true,
+        maxClusterRadius: 50, // Maximum radius that a cluster will cover from the central marker (in pixels)
+        spiderfyOnMaxZoom: true, // When you click a cluster at the bottom zoom level we spiderfy it
+        showCoverageOnHover: false, // When you mouse over a cluster it shows the bounds of its markers
+        zoomToBoundsOnClick: true // When you click a cluster we zoom to its bounds
+    });
+
+    // Add the cluster group to the map
+    map.addLayer(window.propertyMarkers);
+
     // Add event listeners for map movements to load visible properties
     map.on('moveend', function() {
         loadVisibleProperties();
     });
-    
+
     map.on('zoomend', function() {
         loadVisibleProperties();
     });
@@ -61,10 +73,10 @@ function addMockOverlays() {
     if (window.securityLayer) {
         map.removeLayer(window.securityLayer);
     }
-    
+
     // Traffic overlay (simulated with red semi-transparent circles near property locations)
     const trafficLayer = L.layerGroup();
-    
+
     // Create traffic visualization based on property coordinates
     if (window.properties && window.properties.length > 0) {
         window.properties.forEach(property => {
@@ -79,7 +91,7 @@ function addMockOverlays() {
             trafficCircle.addTo(trafficLayer);
         });
     }
-    
+
     // Shopping overlay (simulated with store icons)
     const shoppingLayer = L.layerGroup();
     const storeIcon = L.icon({
@@ -90,12 +102,12 @@ function addMockOverlays() {
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
     });
-    
+
     const store1 = L.marker([-12.06, -77.04], {icon: storeIcon}).bindPopup("Shopping Center 1");
     const store2 = L.marker([-12.08, -77.02], {icon: storeIcon}).bindPopup("Shopping Center 2");
     store1.addTo(shoppingLayer);
     store2.addTo(shoppingLayer);
-    
+
     // Security overlay (simulated with shield icons)
     const securityLayer = L.layerGroup();
     const shieldIcon = L.divIcon({
@@ -104,17 +116,17 @@ function addMockOverlays() {
         iconSize: [24, 24],
         iconAnchor: [12, 12]
     });
-    
+
     const security1 = L.marker([-12.07, -77.03], {icon: shieldIcon}).bindPopup("Security Camera Zone");
     const security2 = L.marker([-12.09, -77.05], {icon: shieldIcon}).bindPopup("Security Patrol Zone");
     security1.addTo(securityLayer);
     security2.addTo(securityLayer);
-    
+
     // Store layers for toggling
     window.trafficLayer = trafficLayer;
     window.shoppingLayer = shoppingLayer;
     window.securityLayer = securityLayer;
-    
+
     // Add event listeners for the toggle buttons
     document.getElementById('trafficToggle').addEventListener('click', function() {
         if (map.hasLayer(trafficLayer)) {
@@ -125,7 +137,7 @@ function addMockOverlays() {
             this.classList.add('active');
         }
     });
-    
+
     document.getElementById('shoppingToggle').addEventListener('click', function() {
         if (map.hasLayer(shoppingLayer)) {
             map.removeLayer(shoppingLayer);
@@ -135,7 +147,7 @@ function addMockOverlays() {
             this.classList.add('active');
         }
     });
-    
+
     document.getElementById('securityToggle').addEventListener('click', function() {
         if (map.hasLayer(securityLayer)) {
             map.removeLayer(securityLayer);
@@ -152,17 +164,13 @@ async function loadProperties() {
     try {
         const response = await fetch('properties.json');
         const properties = await response.json();
-        
+
         // Store properties in a global variable for filtering
         window.properties = properties;
-        
-        // Clear existing markers
-        markers.forEach(marker => map.removeLayer(marker));
-        markers = [];
-        
+
         // Load only properties in the visible map region
         loadVisibleProperties();
-        
+
         // Reinitialize the overlays based on the new property data
         addMockOverlays();
     } catch (error) {
@@ -172,38 +180,37 @@ async function loadProperties() {
 
 // Load only properties that are in the current map view
 function loadVisibleProperties() {
-    // Clear existing markers
-    markers.forEach(marker => map.removeLayer(marker));
-    markers = [];
-    
     if (!window.properties) return;
-    
+
     // Get the current map bounds
     const bounds = map.getBounds();
     const southWest = bounds.getSouthWest();
     const northEast = bounds.getNorthEast();
-    
+
     // Filter properties that are within the current view
     const visibleProperties = window.properties.filter(property => {
         const lat = property.coords[0];
         const lng = property.coords[1];
-        
+
         return lat >= southWest.lat && lat <= northEast.lat &&
                lng >= southWest.lng && lng <= northEast.lng;
     });
-    
-    // Add markers only for properties in the current view
+
+    // Clear existing markers from the cluster group
+    window.propertyMarkers.clearLayers();
+
+    // Add markers only for properties in the current view to the cluster group
     visibleProperties.forEach(property => {
         const marker = L.marker(property.coords)
-            .addTo(map)
             .bindPopup(`<b>${property.titulo}</b><br>${property.precio}`);
-            
+
         // Add click event to show property in history
         marker.on('click', function() {
             addToHistory(property);
         });
-        
-        markers.push(marker);
+
+        // Add marker to the cluster group
+        window.propertyMarkers.addLayer(marker);
     });
 }
 
@@ -353,7 +360,7 @@ function hideDetailView() {
 function reinitializeMap() {
     // Reload properties in the visible area to refresh the map
     loadVisibleProperties();
-    
+
     // Re-add overlays after reinitializing the markers
     addMockOverlays();
 }
