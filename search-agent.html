@@ -67,7 +67,8 @@
         <div class="modal-content pricing-modal-content">
             <span class="close-pricing">&times;</span>
             <h2>Planes de Búsqueda del Agente de AI</h2>
-            <p>Selecciona el plan que mejor se adapte a tus necesidades para encontrar la propiedad ideal</p>
+            <p>Selecciona el plan que mejor se adapte a tus necesidades para encontrar la propiedad ideal.</p>
+            <p>Nuestro agente de AI se encargará de informarte de los nuevos inmuebles que se adaptan a tus preferencias de búsqueda.</p>
 
             <div class="pricing-tiers">
                 <div class="pricing-tier">
@@ -75,7 +76,6 @@
                     <div class="price">S/ 19.90<span>/mes</span></div>
                     <ul>
                         <li>5 búsquedas inteligentes mensuales</li>
-                        <li>Acceso a propiedades básicas</li>
                         <li>Alertas por email</li>
                         <li>Soporte estándar</li>
                     </ul>
@@ -87,7 +87,6 @@
                     <div class="price">S/ 39.90<span>/mes</span></div>
                     <ul>
                         <li>Búsquedas ilimitadas</li>
-                        <li>Acceso a propiedades premium</li>
                         <li>Alertas prioritarias</li>
                         <li>Análisis de precios detallado</li>
                         <li>Soporte 24/7</li>
@@ -100,7 +99,6 @@
                     <div class="price">S/ 59.90<span>/mes</span></div>
                     <ul>
                         <li>Búsquedas ilimitadas</li>
-                        <li>Acceso a todas las propiedades</li>
                         <li>Alertas personalizadas</li>
                         <li>Reportes detallados</li>
                         <li>Soporte prioritario</li>
@@ -462,23 +460,28 @@
                 });
             }
 
-            // Pricing modal subscription buttons
-            const subscribeBtns = document.querySelectorAll('.subscribe-btn');
-            subscribeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const plan = this.classList.contains('basic') ? 'Básico' :
-                                this.classList.contains('professional') ? 'Profesional' : 'Empresa';
+            // Pricing modal subscription buttons - only add listeners once
+            if (!window.pricingListenersAdded) {
+                const subscribeBtns = document.querySelectorAll('.subscribe-btn');
+                subscribeBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const plan = this.classList.contains('basic') ? 'Básico' :
+                                    this.classList.contains('professional') ? 'Profesional' : 'Empresa';
 
-                    // For demo purposes, just show a success message and proceed with the search
-                    alert(`¡Plan ${plan} seleccionado! El agente de búsqueda inteligente ahora analizará tus preferencias.`);
+                        // For demo purposes, just show a success message and proceed with the search
+                        alert(`¡Plan ${plan} seleccionado! El agente de búsqueda inteligente ahora analizará tus preferencias.`);
 
-                    // Close the pricing modal
-                    document.getElementById('pricingModal').style.display = 'none';
+                        // Close the pricing modal
+                        document.getElementById('pricingModal').style.display = 'none';
 
-                    // Perform the AI search with the stored form data
-                    performAISearch();
+                        // Perform the AI search with the stored form data
+                        performAISearch();
+                    });
                 });
-            });
+
+                // Mark that listeners have been added to prevent duplicates
+                window.pricingListenersAdded = true;
+            }
         };
 
         // Perform AI-powered search based on form data and preferences
