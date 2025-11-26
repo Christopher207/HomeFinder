@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente de Búsqueda de Alquiler - HomeFinder</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="logo.png" alt="HomeFinder Logo" class="logo-img">
+                    <span>HomeFinder</span>
+                </a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="opportunity-map.html" class="nav-link">Mapa de Oportunidades</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="search-agent.html" class="nav-link">Agente de Búsqueda</a>
+                </li>
+                <li class="nav-item">
+                    <a href="appraise.html" class="nav-link">Tasar una Propiedad</a>
+                </li>
+                <li class="nav-item">
+                    <a href="notifications.html" class="nav-link">Notificaciones</a>
+                </li>
+                <li class="nav-item">
+                    <button id="loginBtn" class="nav-login-btn">Iniciar Sesión</button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Iniciar Sesión</h2>
+            <form id="loginForm">
+                <div id="loginFields">
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <button type="submit">Iniciar Sesión</button>
+                    <p><a href="#" id="showRegister">¿No tienes una cuenta? Registrate ahora.</a></p>
+                </div>
+                <div id="registerFields" style="display: none;">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <label><input type="checkbox" id="terms"> Acepto los términos y condiciones</label><br>
+                    <label><input type="checkbox" id="privacy"> Autorizo el uso de mi información para otros fines</label><br>
+                    <button type="button" id="registerSubmit">Registrarse</button>
+                    <p><a href="#" id="showLogin">¿Ya cuentas con un usuario? Inicia sesión aquí.</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="search-agent-container">
+        <section class="agent-info-section">
+            <h1>Agente de Búsqueda de Propiedades</h1>
+            <p>Este agente inteligente te ayuda a encontrar las propiedades de alquiler más adecuadas según tus preferencias y necesidades.</p>
+            <p>Completa el siguiente formulario para que nuestro sistema filtre y muestre los resultados más relevantes para ti.</p>
+        </section>
+
+        <section class="form-section">
+            <h2>Filtro de Búsqueda</h2>
+            <form id="searchAgentForm">
+                <div class="form-group">
+                    <label for="propertyType">🏠 Tipo</label>
+                    <select id="propertyType" name="propertyType">
+                        <option value="">Todos los tipos</option>
+                        <option value="departamento">Departamento</option>
+                        <option value="casa">Casa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contractType">📝 Contrato</label>
+                    <select id="contractType" name="contractType">
+                        <option value="">Todos los contratos</option>
+                        <option value="alquiler">Alquiler</option>
+                        <option value="venta">Venta</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">📍 Ubicación</label>
+                    <input type="text" id="location" name="location" placeholder="Distrito o zona">
+                </div>
+
+                <div class="form-group">
+                    <label for="maxPrice">💰 Presupuesto Máximo (S/)</label>
+                    <input type="number" id="maxPrice" name="maxPrice" placeholder="Precio máximo">
+                </div>
+
+                <button type="submit" class="cta-button">Buscar Propiedades</button>
+            </form>
+        </section>
+
+        <section class="results-section">
+            <h2>Resultados de Búsqueda</h2>
+            <div id="searchResults" class="properties-grid">
+                <!-- Results will be displayed here -->
+                <p class="no-results">Completa el formulario para ver resultados</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // Extend the main script with search agent functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize the search agent page
+            const searchAgentForm = document.getElementById('searchAgentForm');
+            if(searchAgentForm) {
+                searchAgentForm.addEventListener('submit', handleSearchAgentSubmit);
+            }
+            
+            // Initialize the main application functions (from script.js)
+            const currentPage = window.location.pathname.split('/').pop();
+            if(currentPage === 'search-agent.html') {
+                setupEventListeners();
+            }
+        });
+
+        // Function to extract numeric value from price string
+        function extractPriceValue(priceStr) {
+            if (!priceStr) return NaN;
+            
+            // Remove currency symbols and other non-numeric characters (except decimal points and commas)
+            // This regex keeps digits, decimal points, and commas used as thousands separators
+            const cleanedStr = priceStr.replace(/[^\d,.-]/g, '');
+            
+            // Replace commas with nothing if they're used as thousands separators
+            // We'll check if the comma is followed by 3 digits to determine this
+            let numericStr = cleanedStr;
+            if (cleanedStr.includes(',')) {
+                // If it looks like a thousands separator (comma followed by 3 digits), remove it
+                numericStr = cleanedStr.replace(/,(\d{3})/g, '$1');
+            }
+            
+            const value = parseFloat(numericStr);
+            return isNaN(value) ? 0 : value;
+        }
+
+        // Global variable to store properties
+        let allProperties = null;
+
+        // Load properties once when the page loads
+        async function loadProperties() {
+            try {
+                // Method 1: Try fetch API (works when served through a web server)
+                const response = await fetch('properties.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                allProperties = await response.json();
+                console.log(`Loaded ${allProperties.length} properties using fetch`);
+            } catch (error) {
+                console.error('Error loading properties:', error);
+                document.getElementById('searchResults').innerHTML = `
+                    <p>Error al cargar las propiedades. Asegúrate de que el archivo properties.json exista en la raíz del proyecto y esté disponible.</p>
+                    <p><strong>Detalles del error:</strong> ${error.message}</p>
+                    <p><strong>Solución recomendada:</strong> Este error ocurre comúnmente al abrir el archivo HTML directamente en el navegador en lugar de usar un servidor web.</p>
+                    <p>Para solucionarlo, ejecuta un servidor web local. Por ejemplo:</p>
+                    <ul>
+                        <li>Con Python: <code>python -m http.server 8000</code> y luego ve a <code>http://localhost:8000</code></li>
+                        <li>Con Node.js: <code>npx http-server</code> y sigue la URL mostrada</li>
+                        <li>Usando la extensión "Live Server" en VS Code</li>
+                    </ul>
+                `;
+            }
+        }
+
+        // Handle search agent form submission
+        async function handleSearchAgentSubmit(e) {
+            e.preventDefault();
+            
+            // Show loading message
+            document.getElementById('searchResults').innerHTML = '<p>Cargando propiedades...</p>';
+            
+            // Load properties if not already loaded
+            if (allProperties === null) {
+                await loadProperties();
+            }
+            
+            if (allProperties === null) {
+                document.getElementById('searchResults').innerHTML = `
+                    <p>No se pudieron cargar las propiedades. Asegúrate de que el archivo properties.json esté disponible.</p>
+                    <p><strong>Solución recomendada:</strong> Este error ocurre comúnmente al abrir el archivo HTML directamente en el navegador en lugar de usar un servidor web.</p>
+                    <p>Para solucionarlo, ejecuta un servidor web local. Por ejemplo:</p>
+                    <ul>
+                        <li>Con Python: <code>python -m http.server 8000</code> y luego ve a <code>http://localhost:8000</code></li>
+                        <li>Con Node.js: <code>npx http-server</code> y sigue la URL mostrada</li>
+                        <li>Usando la extensión "Live Server" en VS Code</li>
+                    </ul>
+                `;
+                return;
+            }
+            
+            // Get form values
+            const propertyType = document.getElementById('propertyType').value;
+            const contractType = document.getElementById('contractType').value;
+            const location = document.getElementById('location').value.toLowerCase();
+            const maxPrice = document.getElementById('maxPrice').value ? parseFloat(document.getElementById('maxPrice').value) : Infinity;
+            
+            try {
+                // Helper function to normalize and compare values
+                function normalizeForComparison(value) {
+                    if (!value) return '';
+                    return value.toLowerCase().trim().replace(/\s+/g, ' ');
+                }
+                
+                // Helper function to check if property value matches the selected filter
+                function matchesFilter(propertyValue, filterValue) {
+                    if (!filterValue) return true; // If no filter is selected, include all
+                    if (!propertyValue) return false; // If property has no value, exclude
+                    
+                    const normalizedProp = normalizeForComparison(propertyValue);
+                    const normalizedFilter = normalizeForComparison(filterValue);
+                    
+                    // Check for exact match or if one contains the other
+                    return normalizedProp.includes(normalizedFilter) || 
+                           normalizedFilter.includes(normalizedProp);
+                }
+                
+                // Filter properties based on form inputs
+                let filteredProperties = allProperties.filter(property => {
+                    // Filter by type
+                    if(propertyType && !matchesFilter(property.tipo, propertyType)) {
+                        return false;
+                    }
+                    
+                    // Filter by contract
+                    if(contractType && !matchesFilter(property.contrato, contractType)) {
+                        return false;
+                    }
+                    
+                    // Filter by location (case-insensitive partial match)
+                    if(location && property.ubicacion) {
+                        if(!normalizeForComparison(property.ubicacion).includes(normalizeForComparison(location))) {
+                            return false;
+                        }
+                    }
+                    
+                    // Filter by price
+                    if(maxPrice !== Infinity) {
+                        const propertyPrice = extractPriceValue(property.precio);
+                        if(isNaN(propertyPrice) || propertyPrice > maxPrice) {
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                });
+                
+                // Display the filtered results
+                displaySearchResults(filteredProperties);
+                
+            } catch (error) {
+                console.error('Error al filtrar propiedades:', error);
+                document.getElementById('searchResults').innerHTML = '<p>Error al filtrar las propiedades. Por favor intenta de nuevo.</p>';
+            }
+        }
+
+        // Initialize properties when page loads
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize the search agent page
+            const searchAgentForm = document.getElementById('searchAgentForm');
+            if(searchAgentForm) {
+                searchAgentForm.addEventListener('submit', handleSearchAgentSubmit);
+            }
+            
+            // Load properties when page loads
+            await loadProperties();
+            
+            // Initialize the main application functions (from script.js)
+            const currentPage = window.location.pathname.split('/').pop();
+            if(currentPage === 'search-agent.html') {
+                setupEventListeners();
+            }
+        });
+
+        // Display search results
+        function displaySearchResults(properties) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if(properties.length === 0) {
+                resultsContainer.innerHTML = '<p class="no-results">No se encontraron propiedades que coincidan con los criterios de búsqueda.</p>';
+                return;
+            }
+            
+            // Sort properties by price (ascending)
+            properties.sort((a, b) => {
+                const priceA = extractPriceValue(a.precio);
+                const priceB = extractPriceValue(b.precio);
+                return priceA - priceB;
+            });
+            
+            // Generate HTML for each property
+            const propertiesHTML = properties.map(property => {
+                // Extract numeric price value for display
+                const extractedPrice = extractPriceValue(property.precio);
+                const priceValue = isNaN(extractedPrice) ? 'No disponible' : extractedPrice.toLocaleString();
+                
+                // Handle image loading with error fallback
+                const imageSrc = property.imagen || 'https://via.placeholder.com/300x200?text=No+Image';
+                
+                return `
+                    <div class="property-card">
+                        <img src="${imageSrc}" alt="${property.titulo || 'Imagen de propiedad'}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image';">
+                        <div class="property-info">
+                            <h3>${property.titulo || 'Título no disponible'}</h3>
+                            <p><strong>Tipo:</strong> ${property.tipo || 'No especificado'}</p>
+                            <p><strong>Contrato:</strong> ${property.contrato || 'No especificado'}</p>
+                            <p><strong>Ubicación:</strong> ${property.ubicacion || 'No especificada'}</p>
+                            <p><strong>Precio:</strong> S/ ${priceValue}</p>
+                            <p><strong>Descripción:</strong> ${property.descripcion || 'No disponible'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsContainer.innerHTML = propertiesHTML;
+        }
+        
+        // Extend the setupEventListeners function to include search agent elements
+        const originalSetupEventListeners = setupEventListeners;
+        setupEventListeners = function() {
+            originalSetupEventListeners();
+            
+            // Add event listeners specific to search agent page
+            const loginBtn = document.getElementById('loginBtn');
+            if(loginBtn) {
+                loginBtn.addEventListener('click', function() {
+                    document.getElementById('loginModal').style.display = 'block';
+                });
+            }
+            
+            // Close modals
+            const closeBtns = document.getElementsByClassName('close');
+            for (let i = 0; i < closeBtns.length; i++) {
+                closeBtns[i].addEventListener('click', function() {
+                    document.getElementById('loginModal').style.display = 'none';
+                });
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const loginModal = document.getElementById('loginModal');
+                if (event.target === loginModal) {
+                    loginModal.style.display = 'none';
+                }
+            });
+            
+            // Switch between login and register forms
+            const showRegisterLink = document.getElementById('showRegister');
+            if(showRegisterLink) {
+                showRegisterLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('loginFields').style.display = 'none';
+                    document.getElementById('registerFields').style.display = 'block';
+                    document.getElementById('modalTitle').textContent = 'Register';
+                });
+            }
+            
+            const showLoginLink = document.getElementById('showLogin');
+            if(showLoginLink) {
+                showLoginLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('registerFields').style.display = 'none';
+                    document.getElementById('loginFields').style.display = 'block';
+                    document.getElementById('modalTitle').textContent = 'Login';
+                });
+            }
+            
+            // Register form submission
+            const registerSubmit = document.getElementById('registerSubmit');
+            if(registerSubmit) {
+                registerSubmit.addEventListener('click', function() {
+                    const email = document.getElementById('regEmail').value;
+                    const password = document.getElementById('regPassword').value;
+                    const terms = document.getElementById('terms').checked;
+                    const privacy = document.getElementById('privacy').checked;
+                    
+                    if(!terms || !privacy) {
+                        alert('Debes aceptar los términos y la política de privacidad');
+                        return;
+                    }
+                    
+                    alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+                    
+                    // Switch back to login form
+                    document.getElementById('registerFields').style.display = 'none';
+                    document.getElementById('loginFields').style.display = 'block';
+                    document.getElementById('modalTitle').textContent = 'Iniciar Sesión';
+                    document.getElementById('email').value = email;
+                });
+            }
+            
+            // Login form submission
+            const loginForm = document.getElementById('loginForm');
+            if(loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    
+                    document.getElementById('loginModal').style.display = 'none';
+                    alert(`¡Inicio de sesión exitoso para ${email}!`);
+                });
+            }
+        };
+    </script>
+</body>
+</html>
