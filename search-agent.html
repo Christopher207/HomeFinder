@@ -72,10 +72,19 @@
 
             <div class="pricing-tiers">
                 <div class="pricing-tier">
-                    <h3>Básico</h3>
-                    <div class="price">S/ 19.90<span>/mes</span></div>
+                    <h3>Gratis</h3>
+                    <div class="price">S/ 0<span>/mes</span></div>
                     <ul>
-                        <li>5 búsquedas inteligentes mensuales</li>
+                        <li><p>Acceso a búsqueda simple</p><p>de propiedades disponibles</p></li>
+                    </ul>
+                    <button class="subscribe-btn free">Mantener Plan Gratuito</button>
+                </div>
+
+                <div class="pricing-tier">
+                    <h3>Básico</h3>
+                    <div class="price">S/ 9.90<span>/mes</span></div>
+                    <ul>
+                        <li>5 búsquedas inteligentes mensuales por nuestro Agente AI</li>
                         <li>Alertas por email</li>
                         <li>Soporte estándar</li>
                     </ul>
@@ -84,7 +93,7 @@
 
                 <div class="pricing-tier featured">
                     <h3>Profesional</h3>
-                    <div class="price">S/ 39.90<span>/mes</span></div>
+                    <div class="price">S/ 19.90<span>/mes</span></div>
                     <ul>
                         <li>Búsquedas ilimitadas</li>
                         <li>Alertas prioritarias</li>
@@ -96,7 +105,7 @@
 
                 <div class="pricing-tier">
                     <h3>Empresa</h3>
-                    <div class="price">S/ 59.90<span>/mes</span></div>
+                    <div class="price">S/ 39.90<span>/mes</span></div>
                     <ul>
                         <li>Búsquedas ilimitadas</li>
                         <li>Alertas personalizadas</li>
@@ -106,52 +115,6 @@
                     </ul>
                     <button class="subscribe-btn business">Seleccionar Plan</button>
                 </div>
-            </div>
-
-            <div class="pricing-chart">
-                <h3>Comparación de Beneficios</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Características</th>
-                            <th>Básico</th>
-                            <th>Profesional</th>
-                            <th>Empresa</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Búsquedas Mensuales</td>
-                            <td>5</td>
-                            <td>Ilimitadas</td>
-                            <td>Ilimitadas</td>
-                        </tr>
-                        <tr>
-                            <td>Acceso a Propiedades</td>
-                            <td>Básico</td>
-                            <td>Premium</td>
-                            <td>Todas</td>
-                        </tr>
-                        <tr>
-                            <td>Alertas</td>
-                            <td>Email</td>
-                            <td>Email + Notificaciones</td>
-                            <td>Personalizadas</td>
-                        </tr>
-                        <tr>
-                            <td>Soporte</td>
-                            <td>Estándar</td>
-                            <td>24/7</td>
-                            <td>Prioritario</td>
-                        </tr>
-                        <tr>
-                            <td>Asistente de IA Avanzado</td>
-                            <td>No</td>
-                            <td>Sí</td>
-                            <td>Sí + Personal</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -206,6 +169,7 @@
 
         <section class="results-section">
             <h2>Resultados de Búsqueda</h2>
+            <p class="search-info">Los resultados actuales se basan en las propiedades actualmente disponibles en nuestra base de datos. Al adquirir nuestro Agente de Búsqueda AI, te notificaremos cuando se publiquen nuevas propiedades que coincidan con tus preferencias, aumentando tus posibilidades de encontrar una buena oferta antes que otros usuarios.</p>
             <div id="searchResults" class="properties-grid">
                 <!-- Results will be displayed here -->
                 <p class="no-results">Completa el formulario para ver resultados</p>
@@ -465,17 +429,28 @@
                 const subscribeBtns = document.querySelectorAll('.subscribe-btn');
                 subscribeBtns.forEach(btn => {
                     btn.addEventListener('click', function() {
+                        const isFreePlan = this.classList.contains('free');
                         const plan = this.classList.contains('basic') ? 'Básico' :
-                                    this.classList.contains('professional') ? 'Profesional' : 'Empresa';
+                                    this.classList.contains('professional') ? 'Profesional' :
+                                    this.classList.contains('business') ? 'Empresa' : 'Gratis';
+
+                        let message = isFreePlan ?
+                            'Has seleccionado el plan gratuito. Puedes hacer búsquedas básicas con los resultados disponibles actualmente.' :
+                            `¡Plan ${plan} seleccionado! El agente de búsqueda inteligente ahora analizará tus preferencias y te notificará de nuevas propiedades.`;
 
                         // For demo purposes, just show a success message and proceed with the search
-                        alert(`¡Plan ${plan} seleccionado! El agente de búsqueda inteligente ahora analizará tus preferencias.`);
+                        alert(message);
 
                         // Close the pricing modal
                         document.getElementById('pricingModal').style.display = 'none';
 
-                        // Perform the AI search with the stored form data
-                        performAISearch();
+                        // Perform the search with the stored form data
+                        // For free plan, use standard search; for paid plans, use AI search
+                        if (isFreePlan) {
+                            performStandardSearch();
+                        } else {
+                            performAISearch();
+                        }
                     });
                 });
 
@@ -619,6 +594,99 @@
 
             } catch (error) {
                 console.error('Error al filtrar propiedades con IA:', error);
+                document.getElementById('searchResults').innerHTML = '<p>Error al filtrar las propiedades. Por favor intenta de nuevo.</p>';
+            }
+        }
+
+        // Perform standard search based on form data (no AI features for free tier)
+        async function performStandardSearch() {
+            // Show loading message
+            document.getElementById('searchResults').innerHTML = '<p>Buscando propiedades disponibles...</p>';
+
+            // Load properties if not already loaded
+            if (allProperties === null) {
+                await loadProperties();
+            }
+
+            if (allProperties === null) {
+                document.getElementById('searchResults').innerHTML = `
+                    <p>No se pudieron cargar las propiedades. Asegúrate de que el archivo properties.json esté disponible.</p>
+                    <p><strong>Solución recomendada:</strong> Este error ocurre comúnmente al abrir el archivo HTML directamente en el navegador en lugar de usar un servidor web.</p>
+                    <p>Para solucionarlo, ejecuta un servidor web local. Por ejemplo:</p>
+                    <ul>
+                        <li>Con Python: <code>python -m http.server 8000</code> y luego ve a <code>http://localhost:8000</code></li>
+                        <li>Con Node.js: <code>npx http-server</code> y sigue la URL mostrada</li>
+                        <li>Usando la extensión "Live Server" en VS Code</li>
+                    </ul>
+                `;
+                return;
+            }
+
+            // Get form data
+            const formData = window.searchFormData;
+
+            try {
+                // Helper function to normalize and compare values
+                function normalizeForComparison(value) {
+                    if (!value) return '';
+                    return value.toLowerCase().trim().replace(/\s+/g, ' ');
+                }
+
+                // Helper function to check if property value matches the selected filter
+                function matchesFilter(propertyValue, filterValue) {
+                    if (!filterValue) return true; // If no filter is selected, include all
+                    if (!propertyValue) return false; // If property has no value, exclude
+
+                    const normalizedProp = normalizeForComparison(propertyValue);
+                    const normalizedFilter = normalizeForComparison(filterValue);
+
+                    // Check for exact match or if one contains the other
+                    return normalizedProp.includes(normalizedFilter) ||
+                           normalizedFilter.includes(normalizedProp);
+                }
+
+                // Filter properties based only on form inputs (no AI preferences for free tier)
+                let filteredProperties = allProperties.filter(property => {
+                    // Filter by type
+                    if(formData.propertyType && !matchesFilter(property.tipo, formData.propertyType)) {
+                        return false;
+                    }
+
+                    // Filter by contract
+                    if(formData.contractType && !matchesFilter(property.contrato, formData.contractType)) {
+                        return false;
+                    }
+
+                    // Filter by location (case-insensitive partial match)
+                    if(formData.location && property.ubicacion) {
+                        if(!normalizeForComparison(property.ubicacion).includes(normalizeForComparison(formData.location))) {
+                            return false;
+                        }
+                    }
+
+                    // Filter by price
+                    if(formData.maxPrice !== Infinity) {
+                        const propertyPrice = extractPriceValue(property.precio);
+                        if(isNaN(propertyPrice) || propertyPrice > formData.maxPrice) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+
+                // For free tier, sort by date added or by price as default, no AI ranking
+                filteredProperties.sort((a, b) => {
+                    const priceA = extractPriceValue(a.precio);
+                    const priceB = extractPriceValue(b.precio);
+                    return priceA - priceB; // Sort by price ascending
+                });
+
+                // Display the filtered results
+                displaySearchResults(filteredProperties);
+
+            } catch (error) {
+                console.error('Error al filtrar propiedades:', error);
                 document.getElementById('searchResults').innerHTML = '<p>Error al filtrar las propiedades. Por favor intenta de nuevo.</p>';
             }
         }
