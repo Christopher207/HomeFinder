@@ -5,15 +5,16 @@ let propertyHistory = [];
 let currentProperty = null;
 let notifications = [];
 let users = [];
+let currentUser = null; // Track current logged-in user
 
 // DOM Content Loaded Event
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize the notifications array early
     await loadNotifications();
-    
+
     // Initialize the application based on the current page
     const currentPage = window.location.pathname.split('/').pop();
-    
+
     if(currentPage === 'opportunity-map.html' || currentPage === '') {
         initializeMap();
         setupEventListeners();
@@ -27,6 +28,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     } else {
         setupEventListeners();
     }
+
+    // Check login status on page load
+    checkLoginStatus();
 });
 
 // Initialize the map
@@ -416,7 +420,7 @@ function setupEventListeners() {
         const loginModal = document.getElementById('loginModal');
         const alertModal = document.getElementById('alertModal');
         const detailModal = document.getElementById('detailModal');
-        
+
         if (event.target === loginModal) {
             loginModal.style.display = 'none';
         }
@@ -425,6 +429,14 @@ function setupEventListeners() {
         }
         if (event.target === detailModal) {
             detailModal.style.display = 'none';
+        }
+
+        // Close user dropdown if clicking outside
+        if (!document.querySelector('.user-profile-bubble').contains(event.target)) {
+            const userDropdown = document.getElementById('userDropdown');
+            if (userDropdown.classList.contains('show')) {
+                userDropdown.classList.remove('show');
+            }
         }
     });
     
@@ -452,48 +464,89 @@ function setupEventListeners() {
     // Register form submission
     const registerSubmit = document.getElementById('registerSubmit');
     if(registerSubmit) {
-        registerSubmit.addEventListener('click', function() {
+        registerSubmit.addEventListener('click', async function() {
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             const terms = document.getElementById('terms').checked;
             const privacy = document.getElementById('privacy').checked;
-            
+
             if(!terms || !privacy) {
                 alert('You must agree to the terms and privacy policy');
                 return;
             }
-            
-            // Create new user (in a real app, this would go to a server)
-            const newUser = {
-                email: email,
-                password: password, // Note: This is insecure for demo purposes
-                propertyHistory: [],
-                notifications: []
-            };
-            
-            // In a real implementation, we would save this to users.json
-            alert('Registration successful! You can now login.');
-            
-            // Switch back to login form
-            document.getElementById('registerFields').style.display = 'none';
-            document.getElementById('loginFields').style.display = 'block';
-            document.getElementById('modalTitle').textContent = 'Login';
-            document.getElementById('email').value = email;
+
+            // Load existing users to check if email already exists
+            try {
+                const response = await fetch('users.json');
+                const existingUsers = await response.json();
+
+                // Check if user already exists
+                const existingUser = existingUsers.find(u => u.email === email);
+                if(existingUser) {
+                    alert('A user with this email already exists');
+                    return;
+                }
+
+                // Create new user
+                const newUser = {
+                    email: email,
+                    password: password, // Note: This is insecure for demo purposes
+                    propertyHistory: [],
+                    notifications: []
+                };
+
+                // For this demo, we'll add the user to the existing users array and save it
+                // In a real implementation, we would send this to a server to save to the database
+                users.push(newUser);
+                alert('Registration successful! You can now login.');
+
+                // Switch back to login form
+                document.getElementById('registerFields').style.display = 'none';
+                document.getElementById('loginFields').style.display = 'block';
+                document.getElementById('modalTitle').textContent = 'Login';
+                document.getElementById('email').value = email;
+            } catch (error) {
+                console.error('Error loading users:', error);
+                alert('Error connecting to user database');
+            }
         });
     }
     
     // Login form submission
     const loginForm = document.getElementById('loginForm');
     if(loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            // In a real app, we would validate against a server
-            // For this demo, we'll just close the modal
-            document.getElementById('loginModal').style.display = 'none';
-            alert(`Login successful for ${email}!`);
+
+            // Load users from JSON file to validate login
+            try {
+                const response = await fetch('users.json');
+                users = await response.json();
+
+                // Find user with matching email and password
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if(user) {
+                    // Login successful
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user)); // Store user in localStorage
+                    document.getElementById('loginModal').style.display = 'none';
+
+                    // Update UI to show user profile
+                    updateUserProfileUI();
+
+                    // Clear form
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
+                } else {
+                    alert('Invalid email or password. Using demo user: user@example.com / password123');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                alert('Error connecting to user database');
+            }
         });
     }
     
@@ -614,6 +667,63 @@ async function performLocationSearch() {
     setTimeout(() => {
         loadVisibleProperties();
     }, 1000);
+}
+
+// Update UI to show user profile after login
+function updateUserProfileUI() {
+    const loginBtn = document.getElementById('loginBtn');
+    const userProfileContainer = document.getElementById('userProfileContainer');
+    const userEmailDisplay = document.getElementById('userEmailDisplay');
+
+    if (currentUser) {
+        // Show user profile bubble and hide login button
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userProfileContainer) userProfileContainer.style.display = 'block';
+        if (userEmailDisplay) userEmailDisplay.textContent = currentUser.email;
+
+        // Add event listener to user icon to toggle dropdown
+        const userIcon = document.querySelector('.user-icon');
+        if (userIcon) {
+            userIcon.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const userDropdown = document.getElementById('userDropdown');
+                userDropdown.classList.toggle('show');
+            });
+        }
+
+        // Add event listener to logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function() {
+                // Clear current user
+                currentUser = null;
+                localStorage.removeItem('currentUser'); // Remove stored user
+
+                // Update UI to hide user profile and show login button
+                if (loginBtn) loginBtn.style.display = 'block';
+                if (userProfileContainer) userProfileContainer.style.display = 'none';
+
+                // Close dropdown
+                const userDropdown = document.getElementById('userDropdown');
+                userDropdown.classList.remove('show');
+            });
+        }
+    } else {
+        // Show login button and hide user profile
+        if (loginBtn) loginBtn.style.display = 'block';
+        if (userProfileContainer) userProfileContainer.style.display = 'none';
+    }
+}
+
+// Check login status on page load
+function checkLoginStatus() {
+    // Check if user is already logged in (could be from a previous session)
+    // We'll check if currentUser is set in localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        updateUserProfileUI();
+    }
 }
 
 // Filter properties based on selections only (without using search input for property filtering)

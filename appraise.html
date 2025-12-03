@@ -34,6 +34,15 @@
                 <li class="nav-item">
                     <button id="loginBtn" class="nav-login-btn">Iniciar Sesión</button>
                 </li>
+                <li class="nav-item" id="userProfileContainer" style="display: none;">
+                    <div class="user-profile-bubble">
+                        <div class="user-icon">👤</div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <span id="userEmailDisplay"></span>
+                            <button id="logoutBtn" class="logout-btn">Cerrar Sesión</button>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -64,7 +73,7 @@
 
     <!-- Main Content -->
     <main class="appraise-container">
-        <h1>Appraise a Property</h1>
+        <h1>Tasar una Propiedad</h1>
         
         <div class="property-display">
             <div class="property-image">
@@ -72,9 +81,9 @@
             </div>
             <div class="property-details">
                 <h2 id="propertyTitle"></h2>
-                <p><strong>Contract:</strong> <span id="propertyContract"></span></p>
-                <p><strong>Location:</strong> <span id="propertyLocation"></span></p>
-                <p><strong>Type:</strong> <span id="propertyType"></span></p>
+                <p><strong>Tipo de contrato:</strong> <span id="propertyContract"></span></p>
+                <p><strong>Ubicación:</strong> <span id="propertyLocation"></span></p>
+                <p><strong>Tipo:</strong> <span id="propertyType"></span></p>
             </div>
         </div>
         
@@ -83,7 +92,7 @@
             <p>Nuestro sistema ha analizado la propiedad y generado una estimación basada en múltiples factores del mercado.</p>
             
             <div class="estimated-price">
-                <h3>Estimated Price: <span id="estimatedPrice">S/ 2,650</span></h3>
+                <h3>Precio Estimadoq2: <span id="estimatedPrice">S/ 2,650</span></h3>
             </div>
             
             <div class="appraisal-details">
